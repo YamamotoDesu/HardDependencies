@@ -143,3 +143,115 @@ class OverrideViewControllerTests: XCTestCase {
  
 }
 ```
+
+----
+
+## Constructor injection 
+Injecting dependencies through initializers -- constructor injection
+
+InstanceInitializerViewController
+```swift
+import UIKit
+
+class InstanceInitializerViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        Analytics.shared.track(event: "viewDidAppear - \(type(of: self))")
+    }
+    
+    private let analytics: Analytics
+    
+    init(anaylytic: Analytics = Analytics.shared) {
+        self.analytics = anaylytic
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+}
+```
+
+InstanceInitializerViewControllerTests
+```swift
+@testable import HardDependencies
+import XCTest
+
+class InstanceInitializerViewControllerTests: XCTestCase {
+
+    func test_viewDidAppear() {
+        let sut = InstanceInitializerViewController(anaylytic: Analytics())
+        sut.loadViewIfNeeded()
+        
+        sut.viewDidAppear(false)
+        /**
+         Test Suite 'InstanceInitializerViewControllerTests' started at 2022-07-18 11:44:58.403
+         Test Case '-[HardDependenciesTests.InstanceInitializerViewControllerTests test_viewDidAppear]' started.
+         >>viewDidAppear - InstanceInitializerViewController
+         Test Case '-[HardDependenciesTests.InstanceInitializerViewControllerTests test_viewDidAppear]' passed (0.009 seconds).
+         Test Suite 'InstanceInitializerViewControllerTests' passed at 2022-07-18 11:44:58.413.
+              Executed 1 test, with 0 failures (0 unexpected) in 0.009 (0.010) seconds
+         */
+    }
+
+}
+```
+
+## Closure Constructor injection 
+
+ClosureIniializerViewController
+```swift
+import UIKit
+
+class ClosureIniializerViewController: UIViewController {
+    
+    private let makeAnalytics: () -> Analytics
+    
+    init(makeAnalytics: @escaping () -> Analytics = { Analytics.shared }) {
+        self.makeAnalytics = makeAnalytics
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        makeAnalytics().track(event: "viewDidAppear - \(type(of: self))")
+    }
+
+}
+```
+
+ClosureInitializerViewControllerTests
+```swift
+
+@testable import HardDependencies
+import XCTest
+
+class ClosureInitializerViewControllerTests: XCTestCase {
+
+    func test_viewDidAppear() {
+        let sut = ClosureIniializerViewController { Analytics()}
+        sut.loadViewIfNeeded()
+        
+        sut.viewDidAppear(false)
+    }
+
+}
+```
