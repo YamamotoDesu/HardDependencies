@@ -21,7 +21,7 @@ class Analytics {
 ```
 -----
 
-## 
+## Singleton
 Putting a singleton backdoor on a singleton you own. Use only for legacy code, not for legacy code.
 MySingletonAnaylytics.swift
 ```swift
@@ -91,7 +91,7 @@ class MySingletonViewControllerTests: XCTestCase {
 
 -----
 
-## 
+## Subclass and Override Method
 Subclass and Override Method, using a test-specific subclass. 
 OverriddeViewController.swift
 ```swift
