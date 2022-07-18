@@ -264,3 +264,111 @@ class ClosureInitializerViewControllerTests: XCTestCase {
 
 }
 ```
+
+---
+## Property injection
+Injectiong dependenccies through propertis --property injection
+
+InstancePropertyViewController
+```swift
+import UIKit
+
+class InstancePropertyViewController: UIViewController {
+    
+    lazy var analytic = Analytics.shared
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        //Analytics.shared.track(event: "viewDidAppear - \(type(of: self))")
+        analytic.track(event: "viewDidAppear - \(type(of: self))")
+        
+    }
+    
+}
+```
+
+```swift
+@testable import HardDependencies
+import XCTest
+
+class InstanceInitializerViewControllerTests: XCTestCase {
+
+    func test_viewDidAppear() {
+        let sut = InstanceInitializerViewController(anaylytic: Analytics())
+        sut.loadViewIfNeeded()
+        
+        sut.viewDidAppear(false)
+        /**
+         Test Suite 'InstanceInitializerViewControllerTests' started at 2022-07-18 11:44:58.403
+         Test Case '-[HardDependenciesTests.InstanceInitializerViewControllerTests test_viewDidAppear]' started.
+         >>viewDidAppear - InstanceInitializerViewController
+         Test Case '-[HardDependenciesTests.InstanceInitializerViewControllerTests test_viewDidAppear]' passed (0.009 seconds).
+         Test Suite 'InstanceInitializerViewControllerTests' passed at 2022-07-18 11:44:58.413.
+              Executed 1 test, with 0 failures (0 unexpected) in 0.009 (0.010) seconds
+         */
+    }
+
+}
+
+
+```
+
+## Closure Property injection
+ClosurePropertyViewController
+```swift
+import UIKit
+
+class ClosurePropertyViewController: UIViewController {
+    
+    var makeAnalytics: () -> Analytics = { Analytics.shared}
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        makeAnalytics().track(event: "viewDidAppear - \(type(of: self))")
+    }
+    
+}
+```
+
+ClosurePropertyViewControllerTests
+```swift
+@testable import HardDependencies
+import XCTest
+
+class ClosurePropertyViewControllerTests: XCTestCase {
+    
+    func test_viewDidAppear() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let sut: ClosurePropertyViewController = storyboard.instantiateViewController(identifier: String(describing: ClosurePropertyViewController.self))
+        sut.loadViewIfNeeded()
+        
+        sut.makeAnalytics = { Analytics()}
+        sut.loadViewIfNeeded()
+        
+        sut.viewDidAppear(false)
+        /**
+         Test Suite 'ClosurePropertyViewControllerTests' started at 2022-07-18 11:44:58.393
+         Test Case '-[HardDependenciesTests.ClosurePropertyViewControllerTests test_viewDidAppear]' started.
+         >>viewDidAppear - ClosurePropertyViewController
+         >>...Not the Analytics singleton
+         Test Case '-[HardDependenciesTests.ClosurePropertyViewControllerTests test_viewDidAppear]' passed (0.007 seconds).
+         Test Suite 'ClosurePropertyViewControllerTests' passed at 2022-07-18 11:44:58.402.
+              Executed 1 test, with 0 failures (0 unexpected) in 0.007 (0.008) seconds
+         */
+    }
+
+}
+```
+
