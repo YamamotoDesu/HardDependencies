@@ -251,6 +251,15 @@ class ClosureInitializerViewControllerTests: XCTestCase {
         sut.loadViewIfNeeded()
         
         sut.viewDidAppear(false)
+        /**
+         Test Suite 'ClosureInitializerViewControllerTests' started at 2022-07-18 11:44:58.384
+         Test Case '-[HardDependenciesTests.ClosureInitializerViewControllerTests test_viewDidAppear]' started.
+         >>viewDidAppear - ClosureIniializerViewController
+         >>...Not the Analytics singleton
+         Test Case '-[HardDependenciesTests.ClosureInitializerViewControllerTests test_viewDidAppear]' passed (0.007 seconds).
+         Test Suite 'ClosureInitializerViewControllerTests' passed at 2022-07-18 11:44:58.393.
+              Executed 1 test, with 0 failures (0 unexpected) in 0.007 (0.009) seconds
+         */
     }
 
 }
